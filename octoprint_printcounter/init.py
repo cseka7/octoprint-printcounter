@@ -1,8 +1,9 @@
 import json
 import os
-from octoprint.plugin import EventHandlerPlugin, StartupPlugin, TemplatePlugin
+from octoprint.plugin import EventHandlerPlugin, StartupPlugin, TemplatePlugin, BlueprintPlugin
+from flask import jsonify, make_response, render_template
 
-class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin):
+class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin, BlueprintPlugin):
     def __init__(self):
         self.print_counts = {}
 
@@ -40,6 +41,11 @@ class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin):
                         self.print_counts[file_path] = 0
         self.save_counts()
 
+    def reset_counts(self):
+        self.print_counts = {}
+        self.initialize_counts()
+        self._logger.info("All print counts have been reset to 0.")
+
     def on_event(self, event, payload):
         if event in ["PrintDone", "PrintFailed"]:
             file_path = payload["file"]
@@ -57,6 +63,21 @@ class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin):
                     self.print_counts[full_path] = 0
                     self._logger.info(f"Initialized print count for new file {full_path} to 0")
                     self.save_counts()
+
+    @BlueprintPlugin.route("/reset_counts", methods=["POST"])
+    def handle_reset_counts(self):
+        self.reset_counts()
+        return make_response(jsonify({"message": "All print counts have been reset to 0."}), 200)
+
+    def get_template_configs(self):
+        return [
+            dict(type="settings", custom_bindings=False)
+        ]
+
+    def get_assets(self):
+        return dict(
+            js=["js/printcounter.js"]
+        )
 
 __plugin_name__ = "PrintCounter"
 __plugin_version__ = "0.1.0"
