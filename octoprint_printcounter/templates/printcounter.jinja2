@@ -1,13 +1,6 @@
-<!-- octoprint_printcounter/templates/printcounter.jinja2 -->
-<div class="accordion-group">
-    <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-target="#collapsePrintCounter">
-            PrintCounter Plugin Settings
-        </a>
-    </div>
-    <div id="collapsePrintCounter" class="accordion-body collapse">
-        <div class="accordion-inner">
-            <button class="btn btn-danger" id="reset_counts_button">Reset Print Counts</button>
-        </div>
-    </div>
+<!-- Print Counter Plugin Settings -->
+<div id="settings_printcounter" class="container">
+    <h3>Print Counter</h3>
+    <button class="btn btn-danger" data-bind="click: resetCounts">Reset Print Counts</button>
+    <p data-bind="visible: resetStatus">The print counts have been reset.</p>
 </div>

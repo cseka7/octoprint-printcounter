@@ -1,7 +1,7 @@
 import json
 import os
 from octoprint.plugin import EventHandlerPlugin, StartupPlugin, TemplatePlugin, BlueprintPlugin
-from flask import jsonify, make_response, render_template
+from flask import jsonify, make_response
 
 class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin, BlueprintPlugin):
     def __init__(self):
@@ -31,7 +31,6 @@ class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin, Blue
             json.dump(self.print_counts, f)
 
     def initialize_counts(self):
-        # Initialize counts for all G-code files in the file list
         files = self._file_manager.list_files(recursive=True)
         for location in files:
             for filename in files[location]:
@@ -45,6 +44,12 @@ class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin, Blue
         self.print_counts = {}
         self.initialize_counts()
         self._logger.info("All print counts have been reset to 0.")
+
+    @BlueprintPlugin.route("/get_count", methods=["GET"])
+    def get_count(self):
+    file_path = request.args.get('file_path')
+    count = self.print_counts.get(file_path, 0)
+    return make_response(jsonify({"count": count}), 200)
 
     def on_event(self, event, payload):
         if event in ["PrintDone", "PrintFailed"]:
@@ -71,7 +76,7 @@ class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin, Blue
 
     def get_template_configs(self):
         return [
-            dict(type="settings", custom_bindings=False)
+            dict(type="settings", custom_bindings=False,  template= "printcounter.jinja2")
         ]
 
     def get_assets(self):
@@ -81,6 +86,7 @@ class PrintCounterPlugin(EventHandlerPlugin, StartupPlugin, TemplatePlugin, Blue
 
 __plugin_name__ = "PrintCounter"
 __plugin_version__ = "0.1.0"
+__plugin_pythoncompat__ = ">=3.7,<4"
 __plugin_description__ = "A plugin to count how many times a G-code file has been printed"
 
 def __plugin_load__():
