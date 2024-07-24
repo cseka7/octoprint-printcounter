@@ -31,6 +31,6 @@ setup(
         ]
     },
     package_data={
-        "": ["static/js/printcounter.js"]
+        "": ["static/js/printcounter.js", "templates/printcounter.jinja2"]
     }
 )
