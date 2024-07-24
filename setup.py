@@ -1,25 +1,27 @@
 # setup.py
-plugin_requires = []
-
-plugin_additional_data = []
-
-plugin_additional_packages = []
-
-plugin_ignored_packages = []
-
-plugin_requires = ["octoprint>=1.4.0"]
-
 from setuptools import setup
 
+plugin_identifier = "printcounter"
+plugin_package = "octoprint_printcounter"
+plugin_name = "OctoPrint-PrintCounter"
+plugin_version = "0.1.0"
+plugin_description = "A plugin to count how many times a G-code file has been printed"
+plugin_author = "Adam Csoka"
+plugin_author_email = "cseka7@gmail.com"
+plugin_url = "https://github.com/yourusername/octoprint-printcounter"
+plugin_license = "AGPLv3"
+
+plugin_requires = []
+
 setup(
-    name="octoprint-printcounter",
-    version="0.1.0",
-    description="A plugin to count how many times a G-code file has been printed",
-    author="Adam Csoka",
-    author_email="cseka7@gmail.com",
-    url="https://github.com/cseka7/octoprint-printcounter",
-    license="AGPLv3",
-    packages=["octoprint_printcounter"],
+    name=plugin_name,
+    version=plugin_version,
+    description=plugin_description,
+    author=plugin_author,
+    author_email=plugin_author_email,
+    url=plugin_url,
+    license=plugin_license,
+    packages=[plugin_package],
     install_requires=plugin_requires,
     include_package_data=True,
     zip_safe=False,
